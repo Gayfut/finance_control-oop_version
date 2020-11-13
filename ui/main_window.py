@@ -1,3 +1,4 @@
+"""file for main_window control"""
 from tkinter import (
     Tk,
     Frame,
@@ -15,29 +16,37 @@ import settings
 
 
 class Application:
+    """control app"""
     def __init__(self):
+        """create main_window"""
         self.main_window = Tk()
 
     def start(self):
+        """start app"""
         self.main_window.mainloop()
 
     def stop(self):
+        """stop app"""
         self.main_window.destroy()
 
 
 class Window(Application):
+    """control main_window"""
     def __init__(self):
         super().__init__()
 
         self.__configure_window()
 
     def __configure_window(self):
+        """configure main_window"""
         self.main_window.title("FinanceControl")
         self.main_window.config(bg="grey")
 
 
-class WindowFrame(Window):
+class WindowFrames(Window):
+    """control frames"""
     def __init__(self):
+        """create frames for main_window"""
         super().__init__()
 
         self.frame_left = Frame(self.main_window, bg="orange")
@@ -46,14 +55,18 @@ class WindowFrame(Window):
         self.__place_frame()
 
     def __place_frame(self):
+        """pack frames"""
         self.frame_left.place(relx=0.01, rely=0.01, relwidth=0.485, relheight=0.98)
         self.frame_right.place(relx=0.505, rely=0.01, relwidth=0.485, relheight=0.98)
 
 
-class FrameWidgets(WindowFrame):
+class FrameWidgets(WindowFrames):
+    """control widgets for main _window frames"""
     def __init__(self):
+        """create widgets"""
         super().__init__()
 
+        # widgets for income and outlay
         self.lbl_name = Label(
             self.frame_left, text="Введите название:", bg="black", fg="orange"
         )
@@ -77,10 +90,10 @@ class FrameWidgets(WindowFrame):
             fg="orange",
         )
 
-        # виджет демо
+        # widget for demo
         self.btn_demo = Button(self.frame_left, text="Демо", bg="black", fg="orange")
 
-        # виджеты результатов
+        # widgets for results
         self.box_result = Listbox(self.frame_right, bg="black", fg="orange")
         self.sb_result = Scrollbar(self.box_result, bg="black")
 
@@ -100,7 +113,7 @@ class FrameWidgets(WindowFrame):
             self.frame_right, text="Сохранить в отд.файл", bg="black", fg="orange"
         )
 
-        # виджеты категорий
+        # widgets for categories
         self.lbl_category = Label(
             self.frame_left, text="Выберите категорию:", bg="black", fg="orange"
         )
@@ -115,7 +128,7 @@ class FrameWidgets(WindowFrame):
 
         self.btn_categories = Button(self.frame_left, text="+", bg="black", fg="orange")
 
-        # виджеты сортировки
+        # widgets for sorting
         self.sort_types = [
             settings.CATEGORY_ALL,
             settings.ARTICLE_INCOME_NAME,
@@ -151,7 +164,7 @@ class FrameWidgets(WindowFrame):
         self.__place_widgets()
 
     def __place_widgets(self):
-        # компановка виджетов
+        """pack widgets"""
         # frame_left
         self.lbl_name.place(relx=0.01, rely=0.01, relwidth=0.98, relheight=0.05)
         self.ent_name.place(relx=0.01, rely=0.06, relwidth=0.98, relheight=0.05)

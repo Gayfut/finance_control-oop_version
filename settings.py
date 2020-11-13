@@ -1,6 +1,4 @@
-"""файл с настройками и константами
-"""
-# для основного приложения
+"""file with constants"""
 ARTICLE_INCOME = "+"
 ARTICLE_OUTLAY = "-"
 

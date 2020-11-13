@@ -1,3 +1,4 @@
+"""main file for app control"""
 from ui import main_window
 
 
