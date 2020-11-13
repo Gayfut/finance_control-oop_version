@@ -11,8 +11,11 @@ from tkinter import (
     Scrollbar,
     RIGHT,
     BOTH,
+    messagebox,
 )
+from db import article_db
 import settings
+import article
 
 
 class Application:
@@ -85,6 +88,7 @@ class MainFrameWidgets(MainWindowFrames):
             text="Добавить доход",
             bg="black",
             fg="orange",
+            command=self.__btn_income_handler,
         )
         self.btn_outlay = Button(
             self.frame_left,
@@ -198,3 +202,39 @@ class MainFrameWidgets(MainWindowFrames):
         self.btn_del.place(relx=0.01, rely=0.73, relwidth=0.32, relheight=0.1)
         self.btn_clean_box.place(relx=0.34, rely=0.73, relwidth=0.32, relheight=0.1)
         self.btn_save.place(relx=0.67, rely=0.73, relwidth=0.32, relheight=0.1)
+
+        self.name = None
+        self.amount = None
+        self.article_type = None
+        self.category_name = None
+        self.article_dict = None
+
+    def __btn_income_handler(self):
+        self.name = self.ent_name.get()
+        try:
+            self.amount = int(self.ent_sum.get())
+        except ValueError:
+            messagebox.showwarning("Предупреждение!", "Пожалуйста, введите число!")
+        self.article_type = settings.ARTICLE_INCOME
+        self.category_name = self.selection_category.get()
+
+        self.__create_article()
+
+    def __create_article(self):
+        self.article = article.Article(
+            self.name, self.amount, self.article_type, self.category_name
+        )
+        self.article_dict = self.article.to_dict()
+
+        self.__add_in_article_list()
+
+    def __add_in_article_list(self):
+        self.article_list = article.ArticleList()
+        self.article_list.add_article_in_list(self.article_dict)
+
+        self.__save_article()
+
+    def __save_article(self):
+        self.article_list = self.article_list.get_article_list()
+        self.article_list_manager = article_db.JSONArticle()
+        self.article_list_manager.write_article_list(self.article_list)
