@@ -17,6 +17,7 @@ import settings
 
 class Application:
     """control app"""
+
     def __init__(self):
         """create main_window"""
         self.main_window = Tk()
@@ -30,8 +31,9 @@ class Application:
         self.main_window.destroy()
 
 
-class Window(Application):
+class MainWindow(Application):
     """control main_window"""
+
     def __init__(self):
         super().__init__()
 
@@ -43,8 +45,9 @@ class Window(Application):
         self.main_window.config(bg="grey")
 
 
-class WindowFrames(Window):
+class MainWindowFrames(MainWindow):
     """control frames"""
+
     def __init__(self):
         """create frames for main_window"""
         super().__init__()
@@ -60,8 +63,9 @@ class WindowFrames(Window):
         self.frame_right.place(relx=0.505, rely=0.01, relwidth=0.485, relheight=0.98)
 
 
-class FrameWidgets(WindowFrames):
+class MainFrameWidgets(MainWindowFrames):
     """control widgets for main _window frames"""
+
     def __init__(self):
         """create widgets"""
         super().__init__()
