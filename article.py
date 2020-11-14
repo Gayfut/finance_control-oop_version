@@ -1,19 +1,19 @@
 from datetime import datetime
-from db import article_db
+# from db import article_db
 
 
-class ArticleList:
-    """control article list"""
-
-    def __init__(self):
-        self.article_list = article_db.JSONArticle()
-        self.article_list = self.article_list.get_article_list()
-
-    def add_article_in_list(self, article_dict):
-        self.article_list.append(article_dict)
-
-    def get_article_list(self):
-        return self.article_list
+# class ArticleList:
+#     """control article list"""
+#
+#     def __init__(self):
+#         self.article_manager = article_db.ArticleJSONManager()
+#         self.article_list = self.article_manager.get_article_list()
+#
+#     def add_article_in_list(self, article_dict):
+#         self.article_list.append(article_dict)
+#
+#     def get_article_list(self):
+#         return self.article_list
 
 
 class Article:
@@ -29,6 +29,7 @@ class Article:
         self.article_dict = None
 
     def to_dict(self):
+        """return article in dict format"""
         self.article_dict = {
             "name": self.name,
             "amount": self.amount,

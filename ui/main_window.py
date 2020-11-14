@@ -96,6 +96,7 @@ class MainFrameWidgets(MainWindowFrames):
             text="Добавить расход",
             bg="black",
             fg="orange",
+            command=self.__btn_outlay_handler,
         )
 
         # widget for demo
@@ -210,31 +211,76 @@ class MainFrameWidgets(MainWindowFrames):
         self.article_dict = None
 
     def __btn_income_handler(self):
-        self.name = self.ent_name.get()
+        """get values from entry margins, create income article and write it in DB"""
+        # self.name = self.ent_name.get()
         try:
+            self.name = self.ent_name.get()
             self.amount = int(self.ent_sum.get())
+            self.article_type = settings.ARTICLE_INCOME
+            self.category_name = self.selection_category.get()
+
+            self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
+            self.article = self.article.to_dict()
+
+            self.article_manager = article_db.ArticleJSONManager()
+            self.article_manager.add_article_in_list(self.article)
+
+            self.article_manager.write_article_list()
+
+            self.__clean_entry()
         except ValueError:
             messagebox.showwarning("Предупреждение!", "Пожалуйста, введите число!")
-        self.article_type = settings.ARTICLE_INCOME
-        self.category_name = self.selection_category.get()
+            self.__clean_entry()
+        # self.article_type = settings.ARTICLE_INCOME
+        # self.category_name = self.selection_category.get()
+        #
+        # self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
+        # self.article = self.article.to_dict()
+        #
+        # self.article_manager = article_db.ArticleJSONManager()
+        # self.article_manager.add_article_in_list(self.article)
+        #
+        # self.article_manager.write_article_list()
+        #
+        # self.__clean_entry()
 
-        self.__create_article()
+    def __btn_outlay_handler(self):
+        """get values from entry margins, create outlay article and write it in DB"""
+        # self.name = self.ent_name.get()
+        try:
+            self.name = self.ent_name.get()
+            self.amount = int(self.ent_sum.get())
+            self.article_type = settings.ARTICLE_OUTLAY
+            self.category_name = self.selection_category.get()
 
-    def __create_article(self):
-        self.article = article.Article(
-            self.name, self.amount, self.article_type, self.category_name
-        )
-        self.article_dict = self.article.to_dict()
+            self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
+            self.article = self.article.to_dict()
 
-        self.__add_in_article_list()
+            self.article_manager = article_db.ArticleJSONManager()
+            self.article_manager.add_article_in_list(self.article)
 
-    def __add_in_article_list(self):
-        self.article_list = article.ArticleList()
-        self.article_list.add_article_in_list(self.article_dict)
+            self.article_manager.write_article_list()
 
-        self.__save_article()
-
-    def __save_article(self):
-        self.article_list = self.article_list.get_article_list()
-        self.article_list_manager = article_db.JSONArticle()
-        self.article_list_manager.write_article_list(self.article_list)
+            self.__clean_entry()
+        except ValueError:
+            messagebox.showwarning("Предупреждение!", "Пожалуйста, введите число!")
+            self.__clean_entry()
+        # self.article_type = settings.ARTICLE_OUTLAY
+        # self.category_name = self.selection_category.get()
+        #
+        # self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
+        # self.article = self.article.to_dict()
+        #
+        # self.article_manager = article_db.ArticleJSONManager()
+        # self.article_manager.add_article_in_list(self.article)
+        #
+        # self.article_manager.write_article_list()
+        #
+        # self.__clean_entry()
+        
+    def __clean_entry(self):
+        """clean entry margins"""
+        self.ent_name.delete(0, "end")
+        self.ent_sum.delete(0, "end")
+        self.ent_sort_date_start.delete(0, "end")
+        self.ent_sort_date_end.delete(0, "end")
