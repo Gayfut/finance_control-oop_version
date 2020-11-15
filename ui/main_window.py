@@ -1,7 +1,7 @@
-"""file for main_window control"""
+"""file for main window control"""
 from tkinter import (
     Tk,
-    Frame,
+    LabelFrame,
     Button,
     Entry,
     Label,
@@ -18,269 +18,271 @@ import settings
 import article
 
 
-class Application:
-    """control app"""
-
-    def __init__(self):
-        """create main_window"""
-        self.main_window = Tk()
-
-    def start(self):
-        """start app"""
-        self.main_window.mainloop()
-
-    def stop(self):
-        """stop app"""
-        self.main_window.destroy()
-
-
-class MainWindow(Application):
+class MainWindow:
     """control main_window"""
 
     def __init__(self):
-        super().__init__()
-
+        self.window = Tk()
+        self.window.bind("<Destroy>", self.destroy)
         self.__configure_window()
+        self.__init_frames()
+        self.__place_frames()
+
+    def mainloop(self):
+        self.window.mainloop()
+
+    def destroy(self, event):
+        if event.widget == self.window:
+            article_manager = article_db.ArticleBufferedJSONManager()
+            article_manager.flush_articles()
+
+    def __init_frames(self):
+        self.income_frame = IncomeFrame(self.window)
+        self.outlay_frame = OutlayFrame(self.window)
+
+    def __place_frames(self):
+        offset = 0.005
+        frame_height = 0.4925
+        frame_width = 0.4925
+        outlay_frame_y = offset * 2 + frame_height
+
+        self.income_frame.place(
+            relx=offset, rely=offset, relwidth=frame_width, relheight=frame_height
+        )
+        self.outlay_frame.place(
+            relx=offset,
+            rely=outlay_frame_y,
+            relwidth=frame_width,
+            relheight=frame_height,
+        )
 
     def __configure_window(self):
         """configure main_window"""
-        self.main_window.title("FinanceControl")
-        self.main_window.config(bg="grey")
+        self.window.title("FinanceControl")
+        self.window.config(bg="grey")
 
 
-class MainWindowFrames(MainWindow):
-    """control frames"""
+class IncomeFrame(LabelFrame):
+    """control income frame"""
 
-    def __init__(self):
-        """create frames for main_window"""
-        super().__init__()
+    def __init__(self, parent):
+        """create income frame"""
+        super().__init__(parent, text="Доход", bg="orange", fg="black")
 
-        self.frame_left = Frame(self.main_window, bg="orange")
-        self.frame_right = Frame(self.main_window, bg="orange")
+        self.__init_widgets()
+        self.__place_widgets()
 
-        self.__place_frame()
-
-    def __place_frame(self):
-        """pack frames"""
-        self.frame_left.place(relx=0.01, rely=0.01, relwidth=0.485, relheight=0.98)
-        self.frame_right.place(relx=0.505, rely=0.01, relwidth=0.485, relheight=0.98)
-
-
-class MainFrameWidgets(MainWindowFrames):
-    """control widgets for main _window frames"""
-
-    def __init__(self):
-        """create widgets"""
-        super().__init__()
-
-        # widgets for income and outlay
-        self.lbl_name = Label(
-            self.frame_left, text="Введите название:", bg="black", fg="orange"
-        )
-        self.ent_name = Entry(self.frame_left, bg="black", fg="orange")
-        self.lbl_sum = Label(
-            self.frame_left, text="Введите сумму:", bg="black", fg="orange"
-        )
-        self.ent_sum = Entry(self.frame_left, bg="black", fg="orange")
+    def __init_widgets(self):
+        self.lbl_name = Label(self, text="Введите название:", bg="black", fg="orange")
+        self.ent_name = Entry(self, bg="black", fg="orange")
+        self.lbl_sum = Label(self, text="Введите сумму:", bg="black", fg="orange")
+        self.ent_sum = Entry(self, bg="black", fg="orange")
         self.btn_income = Button(
-            self.frame_left,
+            self,
             name="income",
             text="Добавить доход",
             bg="black",
             fg="orange",
             command=self.__btn_income_handler,
         )
+
+        self.lbl_category = Label(
+            self, text="Выберите категорию:", bg="black", fg="orange"
+        )
+
+        self.categories = settings.DEFAULT_CATEGORIES_LIST
+        self.selection_category = StringVar(self)
+        self.selection_category.set(self.categories[0])
+        self.menu_categories = OptionMenu(
+            self, self.selection_category, *self.categories
+        )
+        self.menu_categories.config(bg="black", fg="orange")
+
+        self.btn_categories = Button(self, text="+", bg="black", fg="orange")
+
+    def __place_widgets(self):
+        offset = 0.01
+        widget_width = 0.99
+        widget_height = 0.1
+        ent_name_y = offset + widget_height
+        lbl_sum_y = ent_name_y * 2 + offset
+        ent_sum_y = lbl_sum_y + widget_height
+        lbl_category_y = ent_name_y * 4 + offset
+        menu_categories_y = lbl_category_y + widget_height
+        menu_categories_width = 0.7
+        btn_categories_x = menu_categories_width + offset * 2
+        btn_categories_width = 1 - btn_categories_x - offset
+        btn_income_width = 0.5
+        btn_income_height = 0.2
+        btn_income_y = ent_name_y * 6 + offset * 6
+        btn_income_x = (1 - offset * 2 - btn_income_width) / 2
+
+        self.lbl_name.place(
+            relx=offset, rely=offset, relwidth=widget_width, relheight=widget_height
+        )
+        self.ent_name.place(
+            relx=offset, rely=ent_name_y, relwidth=widget_width, relheight=widget_height
+        )
+        self.lbl_sum.place(
+            relx=offset, rely=lbl_sum_y, relwidth=widget_width, relheight=widget_height
+        )
+        self.ent_sum.place(
+            relx=offset, rely=ent_sum_y, relwidth=widget_width, relheight=widget_height
+        )
+        self.lbl_category.place(
+            relx=offset,
+            rely=lbl_category_y,
+            relwidth=widget_width,
+            relheight=widget_height,
+        )
+        self.menu_categories.place(
+            relx=offset,
+            rely=menu_categories_y,
+            relwidth=menu_categories_width,
+            relheight=widget_height,
+        )
+        self.btn_categories.place(
+            relx=btn_categories_x,
+            rely=menu_categories_y,
+            relwidth=btn_categories_width,
+            relheight=widget_height,
+        )
+        self.btn_income.place(
+            relx=btn_income_x,
+            rely=btn_income_y,
+            relwidth=btn_income_width,
+            relheight=btn_income_height,
+        )
+
+    def __btn_income_handler(self):
+        name = self.ent_name.get()
+        try:
+            amount = int(self.ent_sum.get())
+        except ValueError:
+            messagebox.showwarning("Предупреждение!", "Пожалуйста, введите число!")
+            return
+        category_name = self.selection_category.get()
+
+        income_article = article.IncomeArticle(name, amount, category_name)
+        articles_manager = article_db.ArticleBufferedJSONManager()
+        articles_manager.save_article(income_article)
+
+        self.__clean_entry()
+
+    def __clean_entry(self):
+        """clean entry margins"""
+        self.ent_name.delete(0, "end")
+        self.ent_sum.delete(0, "end")
+
+
+class OutlayFrame(LabelFrame):
+    """control outlay frame"""
+
+    def __init__(self, parent):
+        """create outlay frame"""
+        super().__init__(parent, text="Расход", bg="orange", fg="black")
+
+        self.__init_widgets()
+        self.__place_widgets()
+
+    def __init_widgets(self):
+        self.lbl_name = Label(self, text="Введите название:", bg="black", fg="orange")
+        self.ent_name = Entry(self, bg="black", fg="orange")
+        self.lbl_sum = Label(self, text="Введите сумму:", bg="black", fg="orange")
+        self.ent_sum = Entry(self, bg="black", fg="orange")
         self.btn_outlay = Button(
-            self.frame_left,
-            name="outlay",
+            self,
+            name="income",
             text="Добавить расход",
             bg="black",
             fg="orange",
             command=self.__btn_outlay_handler,
         )
 
-        # widget for demo
-        self.btn_demo = Button(self.frame_left, text="Демо", bg="black", fg="orange")
-
-        # widgets for results
-        self.box_result = Listbox(self.frame_right, bg="black", fg="orange")
-        self.sb_result = Scrollbar(self.box_result, bg="black")
-
-        self.sb_result.pack(side=RIGHT, fill=BOTH)
-        self.box_result.config(yscrollcommand=self.sb_result.set)
-        self.sb_result.config(command=self.box_result.yview)
-
-        self.lbl_incomes = Label(self.frame_right, bg="black", fg="green")
-        self.lbl_outlays = Label(self.frame_right, bg="black", fg="red")
-        self.lbl_result = Label(self.frame_right, bg="black", fg="orange")
-
-        self.btn_del = Button(self.frame_right, text="Удалить", bg="black", fg="orange")
-        self.btn_clean_box = Button(
-            self.frame_right, text="Очистить", bg="black", fg="orange"
-        )
-        self.btn_save = Button(
-            self.frame_right, text="Сохранить в отд.файл", bg="black", fg="orange"
-        )
-
-        # widgets for categories
         self.lbl_category = Label(
-            self.frame_left, text="Выберите категорию:", bg="black", fg="orange"
+            self, text="Выберите категорию:", bg="black", fg="orange"
         )
 
         self.categories = settings.DEFAULT_CATEGORIES_LIST
-        self.selection_category = StringVar(self.frame_left)
+        self.selection_category = StringVar(self)
         self.selection_category.set(self.categories[0])
         self.menu_categories = OptionMenu(
-            self.frame_left, self.selection_category, *self.categories
+            self, self.selection_category, *self.categories
         )
         self.menu_categories.config(bg="black", fg="orange")
 
-        self.btn_categories = Button(self.frame_left, text="+", bg="black", fg="orange")
-
-        # widgets for sorting
-        self.sort_types = [
-            settings.CATEGORY_ALL,
-            settings.ARTICLE_INCOME_NAME,
-            settings.ARTICLE_OUTLAY_NAME,
-        ]
-        self.sort_selection_type = StringVar(self.frame_right)
-        self.sort_selection_type.set(self.sort_types[0])
-        self.menu_sort_types = OptionMenu(
-            self.frame_right, self.sort_selection_type, *self.sort_types
-        )
-        self.menu_sort_types.config(bg="black", fg="orange")
-        self.menu_sort_types_in_menu = self.menu_sort_types.children["menu"]
-        self.menu_sort_types_in_menu.bind("<Leave>")
-
-        self.sort_categories = settings.DEFAULT_CATEGORIES_LIST
-        self.sort_categories.insert(0, settings.CATEGORY_ALL)
-        self.sort_selection_category = StringVar(self.frame_right)
-        self.sort_selection_category.set(self.sort_categories[0])
-        self.menu_sort_categories = OptionMenu(
-            self.frame_right, self.sort_selection_category, *self.sort_categories
-        )
-        self.menu_sort_categories.config(bg="black", fg="orange")
-        self.menu_sort_categories_in_menu = self.menu_sort_categories["menu"]
-        self.menu_sort_categories_in_menu.bind("<Leave>")
-
-        self.ent_sort_date_start = Entry(self.frame_right, bg="black", fg="orange")
-        self.ent_sort_date_end = Entry(self.frame_right, bg="black", fg="orange")
-        self.btn_sort_by_date = Button(
-            self.frame_right, text="Отсортировать", bg="black", fg="orange"
-        )
-        self.btn_sort_by_date.bind("<Button-1>")
-
-        self.__place_widgets()
+        self.btn_categories = Button(self, text="+", bg="black", fg="orange")
 
     def __place_widgets(self):
-        """pack widgets"""
-        # frame_left
-        self.lbl_name.place(relx=0.01, rely=0.01, relwidth=0.98, relheight=0.05)
-        self.ent_name.place(relx=0.01, rely=0.06, relwidth=0.98, relheight=0.05)
-        self.lbl_sum.place(relx=0.01, rely=0.13, relwidth=0.98, relheight=0.05)
-        self.ent_sum.place(relx=0.01, rely=0.18, relwidth=0.98, relheight=0.05)
-        self.lbl_category.place(relx=0.01, rely=0.25, relwidth=0.98, relheight=0.05)
-        self.menu_categories.place(relx=0.01, rely=0.31, relwidth=0.7, relheight=0.05)
-        self.btn_categories.place(relx=0.72, rely=0.31, relwidth=0.27, relheight=0.05)
-        self.btn_income.place(relx=0.01, rely=0.38, relwidth=0.48, relheight=0.1)
-        self.btn_outlay.place(relx=0.51, rely=0.38, relwidth=0.48, relheight=0.1)
-        self.btn_demo.place(relx=0.01, rely=0.49, relwidth=0.48, relheight=0.1)
+        offset = 0.01
+        widget_width = 0.99
+        widget_height = 0.1
+        ent_name_y = offset + widget_height
+        lbl_sum_y = ent_name_y * 2 + offset
+        ent_sum_y = lbl_sum_y + widget_height
+        lbl_category_y = ent_name_y * 4 + offset
+        menu_categories_y = lbl_category_y + widget_height
+        menu_categories_width = 0.7
+        btn_categories_x = menu_categories_width + offset * 2
+        btn_categories_width = 1 - btn_categories_x - offset
+        btn_outlay_width = 0.5
+        btn_outlay_height = 0.2
+        btn_outlay_y = ent_name_y * 6 + offset * 6
+        btn_outlay_x = (1 - offset * 2 - btn_outlay_width) / 2
 
-        # frame_right
-        self.menu_sort_types.place(relx=0.01, rely=0.01, relwidth=0.2, relheight=0.05)
-        self.menu_sort_categories.place(
-            relx=0.22, rely=0.01, relwidth=0.2, relheight=0.05
+        self.lbl_name.place(
+            relx=offset, rely=offset, relwidth=widget_width, relheight=widget_height
         )
-        self.ent_sort_date_start.place(
-            relx=0.43, rely=0.01, relwidth=0.2, relheight=0.05
+        self.ent_name.place(
+            relx=offset, rely=ent_name_y, relwidth=widget_width, relheight=widget_height
         )
-        self.ent_sort_date_end.place(relx=0.63, rely=0.01, relwidth=0.2, relheight=0.05)
-        self.btn_sort_by_date.place(relx=0.84, rely=0.01, relwidth=0.15, relheight=0.05)
-        self.box_result.place(relx=0.01, rely=0.07, relwidth=0.98, relheight=0.6)
-        self.lbl_incomes.place(relx=0.01, rely=0.67, relwidth=0.32, relheight=0.06)
-        self.lbl_outlays.place(relx=0.34, rely=0.67, relwidth=0.32, relheight=0.06)
-        self.lbl_result.place(relx=0.67, rely=0.67, relwidth=0.32, relheight=0.06)
-        self.btn_del.place(relx=0.01, rely=0.73, relwidth=0.32, relheight=0.1)
-        self.btn_clean_box.place(relx=0.34, rely=0.73, relwidth=0.32, relheight=0.1)
-        self.btn_save.place(relx=0.67, rely=0.73, relwidth=0.32, relheight=0.1)
-
-        self.name = None
-        self.amount = None
-        self.article_type = None
-        self.category_name = None
-        self.article_dict = None
-
-    def __btn_income_handler(self):
-        """get values from entry margins, create income article and write it in DB"""
-        # self.name = self.ent_name.get()
-        try:
-            self.name = self.ent_name.get()
-            self.amount = int(self.ent_sum.get())
-            self.article_type = settings.ARTICLE_INCOME
-            self.category_name = self.selection_category.get()
-
-            self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
-            self.article = self.article.to_dict()
-
-            self.article_manager = article_db.ArticleJSONManager()
-            self.article_manager.add_article_in_list(self.article)
-
-            self.article_manager.write_article_list()
-
-            self.__clean_entry()
-        except ValueError:
-            messagebox.showwarning("Предупреждение!", "Пожалуйста, введите число!")
-            self.__clean_entry()
-        # self.article_type = settings.ARTICLE_INCOME
-        # self.category_name = self.selection_category.get()
-        #
-        # self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
-        # self.article = self.article.to_dict()
-        #
-        # self.article_manager = article_db.ArticleJSONManager()
-        # self.article_manager.add_article_in_list(self.article)
-        #
-        # self.article_manager.write_article_list()
-        #
-        # self.__clean_entry()
+        self.lbl_sum.place(
+            relx=offset, rely=lbl_sum_y, relwidth=widget_width, relheight=widget_height
+        )
+        self.ent_sum.place(
+            relx=offset, rely=ent_sum_y, relwidth=widget_width, relheight=widget_height
+        )
+        self.lbl_category.place(
+            relx=offset,
+            rely=lbl_category_y,
+            relwidth=widget_width,
+            relheight=widget_height,
+        )
+        self.menu_categories.place(
+            relx=offset,
+            rely=menu_categories_y,
+            relwidth=menu_categories_width,
+            relheight=widget_height,
+        )
+        self.btn_categories.place(
+            relx=btn_categories_x,
+            rely=menu_categories_y,
+            relwidth=btn_categories_width,
+            relheight=widget_height,
+        )
+        self.btn_outlay.place(
+            relx=btn_outlay_x,
+            rely=btn_outlay_y,
+            relwidth=btn_outlay_width,
+            relheight=btn_outlay_height,
+        )
 
     def __btn_outlay_handler(self):
-        """get values from entry margins, create outlay article and write it in DB"""
-        # self.name = self.ent_name.get()
+        name = self.ent_name.get()
         try:
-            self.name = self.ent_name.get()
-            self.amount = int(self.ent_sum.get())
-            self.article_type = settings.ARTICLE_OUTLAY
-            self.category_name = self.selection_category.get()
-
-            self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
-            self.article = self.article.to_dict()
-
-            self.article_manager = article_db.ArticleJSONManager()
-            self.article_manager.add_article_in_list(self.article)
-
-            self.article_manager.write_article_list()
-
-            self.__clean_entry()
+            amount = int(self.ent_sum.get())
         except ValueError:
             messagebox.showwarning("Предупреждение!", "Пожалуйста, введите число!")
-            self.__clean_entry()
-        # self.article_type = settings.ARTICLE_OUTLAY
-        # self.category_name = self.selection_category.get()
-        #
-        # self.article = article.Article(self.name, self.amount, self.article_type, self.category_name)
-        # self.article = self.article.to_dict()
-        #
-        # self.article_manager = article_db.ArticleJSONManager()
-        # self.article_manager.add_article_in_list(self.article)
-        #
-        # self.article_manager.write_article_list()
-        #
-        # self.__clean_entry()
-        
+            return
+        category_name = self.selection_category.get()
+
+        outlay_article = article.OutlayArticle(name, amount, category_name)
+        articles_manager = article_db.ArticleBufferedJSONManager()
+        articles_manager.save_article(outlay_article)
+
+        self.__clean_entry()
+
     def __clean_entry(self):
         """clean entry margins"""
         self.ent_name.delete(0, "end")
         self.ent_sum.delete(0, "end")
-        self.ent_sort_date_start.delete(0, "end")
-        self.ent_sort_date_end.delete(0, "end")
