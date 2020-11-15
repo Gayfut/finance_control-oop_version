@@ -29,10 +29,14 @@ class Article:
 
 
 class IncomeArticle(Article):
+    """control income article specifications"""
+
     def __init__(self, name, amount, category):
         super().__init__(name, amount, ARTICLE_INCOME, category)
 
 
 class OutlayArticle(Article):
+    """control outlay article specifications"""
+
     def __init__(self, name, amount, category):
         super().__init__(name, amount, ARTICLE_OUTLAY, category)

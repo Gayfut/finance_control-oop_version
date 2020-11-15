@@ -5,12 +5,8 @@ from tkinter import (
     Button,
     Entry,
     Label,
-    Listbox,
     OptionMenu,
     StringVar,
-    Scrollbar,
-    RIGHT,
-    BOTH,
     messagebox,
 )
 from db import article_db
@@ -29,18 +25,22 @@ class MainWindow:
         self.__place_frames()
 
     def mainloop(self):
+        """start mainloop"""
         self.window.mainloop()
 
     def destroy(self, event):
+        """destroy window"""
         if event.widget == self.window:
             article_manager = article_db.ArticleBufferedJSONManager()
             article_manager.flush_articles()
 
     def __init_frames(self):
+        """create frames"""
         self.income_frame = IncomeFrame(self.window)
         self.outlay_frame = OutlayFrame(self.window)
 
     def __place_frames(self):
+        """pack frames"""
         offset = 0.005
         frame_height = 0.4925
         frame_width = 0.4925
@@ -73,6 +73,8 @@ class IncomeFrame(LabelFrame):
         self.__place_widgets()
 
     def __init_widgets(self):
+        """create income widgets"""
+        # values entry widgets
         self.lbl_name = Label(self, text="Введите название:", bg="black", fg="orange")
         self.ent_name = Entry(self, bg="black", fg="orange")
         self.lbl_sum = Label(self, text="Введите сумму:", bg="black", fg="orange")
@@ -86,10 +88,10 @@ class IncomeFrame(LabelFrame):
             command=self.__btn_income_handler,
         )
 
+        # category widgets
         self.lbl_category = Label(
             self, text="Выберите категорию:", bg="black", fg="orange"
         )
-
         self.categories = settings.DEFAULT_CATEGORIES_LIST
         self.selection_category = StringVar(self)
         self.selection_category.set(self.categories[0])
@@ -97,10 +99,10 @@ class IncomeFrame(LabelFrame):
             self, self.selection_category, *self.categories
         )
         self.menu_categories.config(bg="black", fg="orange")
-
         self.btn_categories = Button(self, text="+", bg="black", fg="orange")
 
     def __place_widgets(self):
+        """pack income widgets"""
         offset = 0.01
         widget_width = 0.99
         widget_height = 0.1
@@ -155,6 +157,7 @@ class IncomeFrame(LabelFrame):
         )
 
     def __btn_income_handler(self):
+        """get values from entry margins, create income article and save it"""
         name = self.ent_name.get()
         try:
             amount = int(self.ent_sum.get())
@@ -165,7 +168,9 @@ class IncomeFrame(LabelFrame):
 
         income_article = article.IncomeArticle(name, amount, category_name)
         articles_manager = article_db.ArticleBufferedJSONManager()
-        articles_manager.save_article(income_article)
+        article_list = articles_manager.get_articles()
+        article_list.append(income_article)
+        articles_manager.save_articles(article_list)
 
         self.__clean_entry()
 
@@ -186,6 +191,8 @@ class OutlayFrame(LabelFrame):
         self.__place_widgets()
 
     def __init_widgets(self):
+        """create outlay widgets"""
+        # values entry widgets
         self.lbl_name = Label(self, text="Введите название:", bg="black", fg="orange")
         self.ent_name = Entry(self, bg="black", fg="orange")
         self.lbl_sum = Label(self, text="Введите сумму:", bg="black", fg="orange")
@@ -203,6 +210,7 @@ class OutlayFrame(LabelFrame):
             self, text="Выберите категорию:", bg="black", fg="orange"
         )
 
+        # category widgets
         self.categories = settings.DEFAULT_CATEGORIES_LIST
         self.selection_category = StringVar(self)
         self.selection_category.set(self.categories[0])
@@ -210,10 +218,10 @@ class OutlayFrame(LabelFrame):
             self, self.selection_category, *self.categories
         )
         self.menu_categories.config(bg="black", fg="orange")
-
         self.btn_categories = Button(self, text="+", bg="black", fg="orange")
 
     def __place_widgets(self):
+        """pack outlay widgets"""
         offset = 0.01
         widget_width = 0.99
         widget_height = 0.1
@@ -268,6 +276,7 @@ class OutlayFrame(LabelFrame):
         )
 
     def __btn_outlay_handler(self):
+        """get values from entry margins, create outlay article and save it"""
         name = self.ent_name.get()
         try:
             amount = int(self.ent_sum.get())
@@ -278,7 +287,9 @@ class OutlayFrame(LabelFrame):
 
         outlay_article = article.OutlayArticle(name, amount, category_name)
         articles_manager = article_db.ArticleBufferedJSONManager()
-        articles_manager.save_article(outlay_article)
+        article_list = articles_manager.get_articles()
+        article_list.append(outlay_article)
+        articles_manager.save_articles(article_list)
 
         self.__clean_entry()
 

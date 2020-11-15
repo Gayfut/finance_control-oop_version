@@ -1,3 +1,4 @@
+"""file for control app specifications"""
 from ui import main_window
 
 
