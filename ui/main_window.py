@@ -2,7 +2,7 @@
 from tkinter import (
     Tk,
 )
-from ui import income_frame, outlay_frame
+from ui import income_frame, outlay_frame, main_result_frame
 
 
 class MainWindow:
@@ -35,6 +35,9 @@ class MainWindow:
         self.outlay_frame = outlay_frame.OutlayFrame(
             self.window, self.__articles_manager
         )
+        self.result_frame = main_result_frame.ResultFrame(
+            self.window, self.__articles_manager
+        )
 
     def __place_frames(self):
         """pack frames"""
@@ -42,6 +45,8 @@ class MainWindow:
         frame_height = 0.4925
         frame_width = 0.4925
         outlay_frame_y = offset * 2 + frame_height
+        result_frame_x = frame_width + offset * 2
+        result_frame_height = frame_height + outlay_frame_y - offset
 
         self.income_frame.place(
             relx=offset, rely=offset, relwidth=frame_width, relheight=frame_height
@@ -51,6 +56,12 @@ class MainWindow:
             rely=outlay_frame_y,
             relwidth=frame_width,
             relheight=frame_height,
+        )
+        self.result_frame.place(
+            relx=result_frame_x,
+            rely=offset,
+            relwidth=frame_width,
+            relheight=result_frame_height,
         )
 
     def __configure_window(self):
