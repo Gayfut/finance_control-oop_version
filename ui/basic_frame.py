@@ -9,11 +9,12 @@ class BasicFrame(LabelFrame):
     BTN_APPEND_TEXT = None
     FRAME_TEXT = None
 
-    def __init__(self, parent, articles_manager):
+    def __init__(self, parent, articles_manager, result_frame):
         """create income frame"""
         super().__init__(parent, text=self.FRAME_TEXT, bg="orange", fg="black")
 
         self.__articles_manager = articles_manager
+        self.result_frame = result_frame
 
         self.__init_widgets()
         self.__place_widgets()
@@ -131,6 +132,7 @@ class BasicFrame(LabelFrame):
         self.__articles_manager.save_article(new_article)
 
         self.__clean_entry()
+        self.result_frame.show_articles_unsorted()
 
     def __btn_categories_handler(self):
         self.category_window = categories_window.CategoryWindow(

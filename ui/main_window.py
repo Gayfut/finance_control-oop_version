@@ -2,7 +2,7 @@
 from tkinter import (
     Tk,
 )
-from ui import income_frame, outlay_frame, main_result_frame
+from ui import income_frame, outlay_frame, result_frame
 
 
 class MainWindow:
@@ -29,14 +29,14 @@ class MainWindow:
 
     def __init_frames(self):
         """create frames"""
-        self.income_frame = income_frame.IncomeFrame(
+        self.result_frame = result_frame.ResultFrame(
             self.window, self.__articles_manager
+        )
+        self.income_frame = income_frame.IncomeFrame(
+            self.window, self.__articles_manager, self.result_frame
         )
         self.outlay_frame = outlay_frame.OutlayFrame(
-            self.window, self.__articles_manager
-        )
-        self.result_frame = main_result_frame.ResultFrame(
-            self.window, self.__articles_manager
+            self.window, self.__articles_manager, self.result_frame
         )
 
     def __place_frames(self):

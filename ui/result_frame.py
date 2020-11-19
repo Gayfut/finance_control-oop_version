@@ -10,22 +10,24 @@ from tkinter import (
     OptionMenu,
     Entry,
 )
-from settings import CATEGORY_ALL, ARTICLE_INCOME_NAME, ARTICLE_OUTLAY_NAME
+from settings import CATEGORY_ALL, ARTICLE_INCOME_NAME, ARTICLE_OUTLAY_NAME, ARTICLE_INCOME, ARTICLE_OUTLAY
 from db import category_db
 
 
 class ResultFrame(LabelFrame):
     def __init__(self, parent, articles_manager):
-        """create income frame"""
+        """create result frame"""
         super().__init__(parent, text="Результаты", bg="orange", fg="black")
 
         self.__articles_manager = articles_manager
 
         self.__init_widgets()
         self.__place_widgets()
+        self.show_articles_unsorted()
 
     def __init_widgets(self):
-        # виджеты результатов
+        """create widgets"""
+        # result widgets
         self.box_result = Listbox(self, bg="black", fg="orange")
         self.sb_result = Scrollbar(self.box_result, bg="black")
 
@@ -197,3 +199,37 @@ class ResultFrame(LabelFrame):
             relwidth=result_widget_width,
             relheight=result_btn_height,
         )
+
+    def show_articles_unsorted(self):
+        article_list = self.__articles_manager.get_articles()
+        self.show_articles(article_list)
+
+    def show_articles(self, article_list):
+        self.__clean_box()
+
+        for _article in article_list:
+            name = _article.name
+            amount = _article.amount
+            article_type = _article.article_type
+            date_create = _article.date_create
+            category_name = _article.category
+
+            name = name.rjust(10, " ")
+            amount = str(amount).rjust(6, " ")
+
+            if article_type == ARTICLE_INCOME:
+                self.box_result.insert(
+                    0, f"{article_type} {name} {amount} {category_name} {date_create}"
+                )
+                self.box_result.itemconfig(0, {"bg": "green"})
+            elif article_type == ARTICLE_OUTLAY:
+                self.box_result.insert(
+                    0, f"{article_type} {name} {amount} {category_name} {date_create}"
+                )
+                self.box_result.itemconfig(0, {"bg": "red"})
+
+    def show_result(self):
+        pass
+
+    def __clean_box(self):
+        self.box_result.delete(0, "end")

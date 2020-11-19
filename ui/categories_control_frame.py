@@ -65,6 +65,7 @@ class ControlFrame(LabelFrame):
         category_db.CategoryJSONManager.save_category(new_category)
 
         self.list_frame.show_categories()
+        self.__clean_entry()
 
     def __btn_delete_category_handler(self):
         selection_category = self.list_frame.box_categories.curselection()
@@ -74,3 +75,6 @@ class ControlFrame(LabelFrame):
 
         category_db.CategoryJSONManager.delete_category(selection_category)
         self.list_frame.box_categories.delete(selection_category)
+
+    def __clean_entry(self):
+        self.ent_new_category.delete(0, "end")
