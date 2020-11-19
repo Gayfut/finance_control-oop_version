@@ -1,16 +1,17 @@
+"""file control specification of base frame for articles"""
 from tkinter import LabelFrame, Label, Entry, Button, StringVar, OptionMenu, messagebox
 from ui import categories_window
 from db import category_db
 
 
 class BasicFrame(LabelFrame):
-    """control income frame"""
+    """control article frame"""
 
     BTN_APPEND_TEXT = None
     FRAME_TEXT = None
 
     def __init__(self, parent, articles_manager, result_frame):
-        """create income frame"""
+        """create article frame"""
         super().__init__(parent, text=self.FRAME_TEXT, bg="orange", fg="black")
 
         self.__articles_manager = articles_manager
@@ -20,7 +21,7 @@ class BasicFrame(LabelFrame):
         self.__place_widgets()
 
     def __init_widgets(self):
-        """create income widgets"""
+        """create article widgets"""
         # values entry widgets
         self.lbl_name = Label(self, text="Введите название:", bg="black", fg="orange")
         self.ent_name = Entry(self, bg="black", fg="orange")
@@ -60,7 +61,7 @@ class BasicFrame(LabelFrame):
         )
 
     def __place_widgets(self):
-        """pack income widgets"""
+        """pack article widgets"""
         offset = 0.01
         widget_width = 0.99
         widget_height = 0.1
@@ -115,6 +116,7 @@ class BasicFrame(LabelFrame):
         )
 
     def _get_article(self, name, amount, category_name):
+        """create and return article"""
         raise NotImplementedError()
 
     def __btn_article_handler(self):
@@ -133,8 +135,10 @@ class BasicFrame(LabelFrame):
 
         self.__clean_entry()
         self.result_frame.show_articles_unsorted()
+        self.result_frame.show_result_unsorted()
 
     def __btn_categories_handler(self):
+        """create category window"""
         self.category_window = categories_window.CategoryWindow(
             self.menu_categories, self.selection_category
         )

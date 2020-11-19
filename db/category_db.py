@@ -1,15 +1,20 @@
+"""file for category DB control"""
 import json
 from settings import DEFAULT_CATEGORIES_LIST
 from category import Category
 
 
 class CategoryJSONManager:
+    """CRUD for category in json file format"""
+
     @classmethod
     def save_category(cls, category):
+        """save one category"""
         cls.save_categories([category])
 
     @classmethod
     def save_categories(cls, categories):
+        """save categories"""
         categories_list = cls.get_categories()
         categories_list.extend(categories)
 
@@ -25,6 +30,7 @@ class CategoryJSONManager:
 
     @staticmethod
     def get_categories():
+        """return categories"""
         try:
             with open("categories_list.json", encoding="utf-8") as file_with_categories:
                 categories_names_list = json.load(file_with_categories)
@@ -40,6 +46,7 @@ class CategoryJSONManager:
 
     @classmethod
     def delete_category(cls, category):
+        """delete category"""
         categories_list = cls.get_categories()
         del categories_list[category]
 
@@ -47,6 +54,7 @@ class CategoryJSONManager:
 
     @staticmethod
     def __write_categories(categories_list):
+        """save categories without repeat"""
         categories_names_list = []
         for _category in categories_list:
             _category_name = _category.name

@@ -1,10 +1,14 @@
+"""file control specification of control frame on category window"""
 from tkinter import LabelFrame, Entry, Button
 from category import Category
 from db import category_db
 
 
 class ControlFrame(LabelFrame):
+    """control control frame"""
+
     def __init__(self, parent, list_frame):
+        """create control frame"""
         super().__init__(parent, text="Управление", bg="orange", fg="black")
 
         self.list_frame = list_frame
@@ -13,6 +17,7 @@ class ControlFrame(LabelFrame):
         self.__place_widgets()
 
     def __init_widgets(self):
+        """create control widgets"""
         self.ent_new_category = Entry(self, bg="black", fg="orange")
         self.btn_new_category = Button(
             self,
@@ -30,6 +35,7 @@ class ControlFrame(LabelFrame):
         )
 
     def __place_widgets(self):
+        """pack control widgets"""
         offset = 0.01
         ent_new_category_width = 0.7
         widget_height = 0.1
@@ -58,6 +64,7 @@ class ControlFrame(LabelFrame):
         )
 
     def __btn_new_category_handler(self):
+        """get category name from margin and create new category"""
         new_category_name = self.ent_new_category.get()
 
         new_category = Category(new_category_name)
@@ -68,6 +75,7 @@ class ControlFrame(LabelFrame):
         self.__clean_entry()
 
     def __btn_delete_category_handler(self):
+        """delete selected category"""
         selection_category = self.list_frame.box_categories.curselection()
         selection_category = selection_category[0]
         if not selection_category:
@@ -77,4 +85,5 @@ class ControlFrame(LabelFrame):
         self.list_frame.box_categories.delete(selection_category)
 
     def __clean_entry(self):
+        """clean entry margin"""
         self.ent_new_category.delete(0, "end")

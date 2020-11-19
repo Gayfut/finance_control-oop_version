@@ -1,3 +1,4 @@
+"""file for control specification of result frame"""
 from tkinter import (
     LabelFrame,
     Listbox,
@@ -10,11 +11,19 @@ from tkinter import (
     OptionMenu,
     Entry,
 )
-from settings import CATEGORY_ALL, ARTICLE_INCOME_NAME, ARTICLE_OUTLAY_NAME, ARTICLE_INCOME, ARTICLE_OUTLAY
-from db import category_db
+from settings import (
+    CATEGORY_ALL,
+    ARTICLE_INCOME_NAME,
+    ARTICLE_OUTLAY_NAME,
+    ARTICLE_INCOME,
+    ARTICLE_OUTLAY,
+)
+from db import category_db, result_db
 
 
 class ResultFrame(LabelFrame):
+    """control result frame"""
+
     def __init__(self, parent, articles_manager):
         """create result frame"""
         super().__init__(parent, text="Результаты", bg="orange", fg="black")
@@ -24,9 +33,10 @@ class ResultFrame(LabelFrame):
         self.__init_widgets()
         self.__place_widgets()
         self.show_articles_unsorted()
+        self.show_result_unsorted()
 
     def __init_widgets(self):
-        """create widgets"""
+        """create result widgets"""
         # result widgets
         self.box_result = Listbox(self, bg="black", fg="orange")
         self.sb_result = Scrollbar(self.box_result, bg="black")
@@ -66,6 +76,7 @@ class ResultFrame(LabelFrame):
             fg="orange",
         )
 
+        # sort widgets
         sort_types = [
             CATEGORY_ALL,
             ARTICLE_INCOME_NAME,
@@ -108,6 +119,7 @@ class ResultFrame(LabelFrame):
         )
 
     def __place_widgets(self):
+        """pack result widgets"""
         offset = 0.01
         sort_widget_width = 0.2
         sort_widget_height = 0.05
@@ -201,10 +213,12 @@ class ResultFrame(LabelFrame):
         )
 
     def show_articles_unsorted(self):
+        """show unsorted articles in list box"""
         article_list = self.__articles_manager.get_articles()
         self.show_articles(article_list)
 
     def show_articles(self, article_list):
+        """show certain articles in list box"""
         self.__clean_box()
 
         for _article in article_list:
@@ -228,8 +242,28 @@ class ResultFrame(LabelFrame):
                 )
                 self.box_result.itemconfig(0, {"bg": "red"})
 
-    def show_result(self):
-        pass
+    def show_result_unsorted(self):
+        """show unsorted results in labels"""
+        article_list = self.__articles_manager.get_articles()
+        self.show_result(article_list)
+
+    def show_result(self, article_list):
+        """show certain results in labels"""
+        income_result = result_db.ResultManager.get_income_result(article_list)
+        self.lbl_incomes["text"] = f"Доходы: {income_result}"
+
+        outlay_result = result_db.ResultManager.get_outlay_result(article_list)
+        self.lbl_outlays["text"] = f"Расходы: {outlay_result}"
+
+        final_result = result_db.ResultManager.get_final_result(article_list)
+        self.lbl_result["text"] = f"Итог: {final_result}"
+        if final_result > 0:
+            self.lbl_result["fg"] = "green"
+        elif final_result < 0:
+            self.lbl_result["fg"] = "red"
+        else:
+            self.lbl_result["fg"] = "orange"
 
     def __clean_box(self):
+        """clean list box"""
         self.box_result.delete(0, "end")

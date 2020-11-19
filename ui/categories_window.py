@@ -1,10 +1,14 @@
+"""file for control specification of category window"""
 from tkinter import Toplevel
 from db import category_db
 from ui import categories_control_frame, categories_list_frame
 
 
 class CategoryWindow:
+    """control category window"""
+
     def __init__(self, main_frames_menu_categories, main_frames_selection_category):
+        """create category window"""
         self.window = Toplevel()
 
         self.main_frames_menu_categories = main_frames_menu_categories
@@ -15,6 +19,7 @@ class CategoryWindow:
         self.__place_frames()
 
     def __configure_window(self):
+        """configure category window"""
         self.window.config(bg="black")
         self.window.title("Категории")
         self.window.geometry("640x480")
@@ -23,12 +28,14 @@ class CategoryWindow:
         self.window.bind("<Destroy>", self.__refresh_categories)
 
     def __init_frames(self):
+        """create frames for category window"""
         self.list_frame = categories_list_frame.ListFrame(self.window)
         self.control_frame = categories_control_frame.ControlFrame(
             self.window, self.list_frame
         )
 
     def __place_frames(self):
+        """pack frames on category window"""
         offset = 0.005
         frame_height = 0.99
         frame_width = 0.4925
@@ -45,7 +52,7 @@ class CategoryWindow:
         )
 
     def __refresh_categories(self, event):
-        """обновляет спиок категорий в option menu на главной странице"""
+        """refresh categories in option menu on main window"""
         categories = category_db.CategoryJSONManager.get_categories()
         categories_names = []
         for _category in categories:

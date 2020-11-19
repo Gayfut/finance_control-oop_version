@@ -6,6 +6,7 @@ class Article:
     """control article specification"""
 
     def __init__(self, name, amount, article_type, category, date_create=None):
+        """create article"""
         self.name = name
         self.amount = amount
         self.article_type = article_type

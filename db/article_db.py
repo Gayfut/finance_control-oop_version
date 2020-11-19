@@ -6,7 +6,7 @@ import settings
 
 
 class ArticleBufferedJSONManager:
-    """CRUD for article in JSON file"""
+    """CRUD for article in json file format"""
 
     ARTICLE_BUFFER_SIZE = 5
 
@@ -74,4 +74,5 @@ class ArticleBufferedJSONManager:
         return article_list
 
     def __clean_article_buffer(self):
+        """clean articles buffer"""
         self.__article_buffer = []
