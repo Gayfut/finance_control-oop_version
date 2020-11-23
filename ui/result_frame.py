@@ -54,18 +54,14 @@ class ResultFrame(LabelFrame):
             text="Удалить",
             bg="black",
             fg="orange",
+            command=self.__btn_delete_handler,
         )
         self.btn_clean_box = Button(
             self,
             text="Очистить",
             bg="black",
             fg="orange",
-        )
-        self.btn_save = Button(
-            self,
-            text="Сохранить в отд.файл",
-            bg="black",
-            fg="orange",
+            command=self.__btn_clean_handler,
         )
 
         # demo widget
@@ -205,7 +201,7 @@ class ResultFrame(LabelFrame):
             relwidth=result_widget_width,
             relheight=result_btn_height,
         )
-        self.btn_save.place(
+        self.btn_demo.place(
             relx=lbl_result_x,
             rely=btn_results_y,
             relwidth=result_widget_width,
@@ -214,8 +210,10 @@ class ResultFrame(LabelFrame):
 
     def show_articles_unsorted(self):
         """show unsorted articles in list box"""
+        article_buffer = self.__articles_manager.get_article_buffer()
         article_list = self.__articles_manager.get_articles()
-        self.show_articles(article_list)
+        article_buffer.extend(article_list)
+        self.show_articles(article_buffer)
 
     def show_articles(self, article_list):
         """show certain articles in list box"""
@@ -244,8 +242,10 @@ class ResultFrame(LabelFrame):
 
     def show_result_unsorted(self):
         """show unsorted results in labels"""
+        article_buffer = self.__articles_manager.get_article_buffer()
         article_list = self.__articles_manager.get_articles()
-        self.show_result(article_list)
+        article_buffer.extend(article_list)
+        self.show_result(article_buffer)
 
     def show_result(self, article_list):
         """show certain results in labels"""
@@ -263,6 +263,28 @@ class ResultFrame(LabelFrame):
             self.lbl_result["fg"] = "red"
         else:
             self.lbl_result["fg"] = "orange"
+
+    def __btn_delete_handler(self):
+        """get selection article from list box, create article and delete it from article db"""
+        # TODO: need fix
+        selection_article_index = self.box_result.curselection()
+        selection_article_index = selection_article_index[0]
+        selection_article = self.box_result.get(selection_article_index)
+        selection_article = list(selection_article)
+
+        if not selection_article:
+            return None
+
+        self.__articles_manager.delete_article(selection_article)
+        self.box_result.delete(selection_article_index)
+
+    def __btn_clean_handler(self):
+        """clean article buffer, article list and list box"""
+        clear_article_list = []
+
+        self.__articles_manager.clean_all()
+        self.show_result(clear_article_list)
+        self.__clean_box()
 
     def __clean_box(self):
         """clean list box"""

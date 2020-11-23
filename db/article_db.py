@@ -17,6 +17,10 @@ class ArticleBufferedJSONManager:
             self.__buffer_size = buffer_size
         self.__article_buffer = []
 
+    def get_article_buffer(self):
+        """return article buffer"""
+        return self.__article_buffer
+
     def flush_articles(self):
         """save articles from buffer"""
         old_articles_list = self.get_articles()
@@ -48,6 +52,15 @@ class ArticleBufferedJSONManager:
 
         self.flush_articles()
 
+    # def delete_article(self, selection_article):
+    #
+    #     if len(self.__article_buffer) == 0:
+    #         article_list = self.get_articles()
+    #         del article_list[selection_article]
+    #         self.save_articles(article_list)
+    #     else:
+    #         del self.__article_buffer[selection_article]
+
     @staticmethod
     def get_articles():
         """return articles"""
@@ -72,6 +85,15 @@ class ArticleBufferedJSONManager:
             )
             article_list.append(article)
         return article_list
+
+    def clean_all(self):
+        """clean article buffer and article list"""
+        self.__clean_article_buffer()
+
+        clear_article_list = []
+
+        with open("article_list.json", "w", encoding="utf-8") as file_with_article:
+            json.dump(clear_article_list, file_with_article, ensure_ascii=False)
 
     def __clean_article_buffer(self):
         """clean articles buffer"""

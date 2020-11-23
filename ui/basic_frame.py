@@ -131,7 +131,13 @@ class BasicFrame(LabelFrame):
 
         new_article = self._get_article(name, amount, category_name)
 
-        self.__articles_manager.save_article(new_article)
+        check_status = self.__check_article_on_repeat(new_article)
+        print(check_status)
+        if check_status is True:
+            self.__articles_manager.save_article(new_article)
+        else:
+            self.__clean_entry()
+            return
 
         self.__clean_entry()
         self.result_frame.show_articles_unsorted()
@@ -142,6 +148,25 @@ class BasicFrame(LabelFrame):
         self.category_window = categories_window.CategoryWindow(
             self.menu_categories, self.selection_category
         )
+
+    def __check_article_on_repeat(self, new_article):
+        """check new article on repeat in article DB"""
+        article_buffer = self.__articles_manager.get_article_buffer()
+        article_list = self.__articles_manager.get_articles()
+        article_buffer.extend(article_list)
+
+        for _article in article_buffer:
+            if (
+                (new_article.name == _article.name)
+                and (new_article.amount == _article.amount)
+                and (new_article.article_type == _article.article_type)
+                and (new_article.category == _article.category)
+            ):
+                messagebox.showwarning(
+                    "Предупреждение!", "Такой артикл уже существует!"
+                )
+                return False
+        return True
 
     def __clean_entry(self):
         """clean entry margins"""
