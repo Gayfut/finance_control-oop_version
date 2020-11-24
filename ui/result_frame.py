@@ -10,16 +10,20 @@ from tkinter import (
     StringVar,
     OptionMenu,
     Entry,
+    messagebox,
 )
+from datetime import datetime
 from settings import (
     CATEGORY_ALL,
     ARTICLE_INCOME_NAME,
     ARTICLE_OUTLAY_NAME,
     ARTICLE_INCOME,
     ARTICLE_OUTLAY,
+    DATE_FORMAT,
 )
 from db import category_db, result_db
 from fixture import FixtureManager
+from sort import Sorter
 
 
 class ResultFrame(LabelFrame):
@@ -76,13 +80,13 @@ class ResultFrame(LabelFrame):
             ARTICLE_INCOME_NAME,
             ARTICLE_OUTLAY_NAME,
         ]
-        sort_selection_type = StringVar(self)
-        sort_selection_type.set(sort_types[0])
-        self.menu_sort_types = OptionMenu(self, sort_selection_type, *sort_types)
+        self.sort_selection_type = StringVar(self)
+        self.sort_selection_type.set(sort_types[0])
+        self.menu_sort_types = OptionMenu(self, self.sort_selection_type, *sort_types)
         self.menu_sort_types.config(bg="black", fg="orange")
         self.menu_sort_types_in_menu = self.menu_sort_types.children["menu"]
         self.menu_sort_types_in_menu.bind(
-            "<Leave>",
+            "<Leave>", self.__sort_handler
         )
 
         sort_categories = category_db.CategoryJSONManager.get_categories()
@@ -91,7 +95,7 @@ class ResultFrame(LabelFrame):
             _category_name = _category.name
             sort_categories_names.append(_category_name)
 
-        sort_categories.insert(0, CATEGORY_ALL)
+        sort_categories_names.insert(0, CATEGORY_ALL)
         self.sort_selection_category = StringVar(self)
         self.sort_selection_category.set(sort_categories_names[0])
         self.menu_sort_categories = OptionMenu(
@@ -100,7 +104,7 @@ class ResultFrame(LabelFrame):
         self.menu_sort_categories.config(bg="black", fg="orange")
         self.menu_sort_categories_in_menu = self.menu_sort_categories["menu"]
         self.menu_sort_categories_in_menu.bind(
-            "<Leave>",
+            "<Leave>", self.__sort_handler
         )
 
         self.ent_sort_date_start = Entry(self, bg="black", fg="orange")
@@ -109,7 +113,7 @@ class ResultFrame(LabelFrame):
             self, text="Отсортировать", bg="black", fg="orange"
         )
         self.btn_sort_by_date.bind(
-            "<Button-1>",
+            "<Button-1>", self.__sort_handler
         )
 
     def __place_widgets(self):
@@ -292,6 +296,66 @@ class ResultFrame(LabelFrame):
         self.show_articles(fixture_article_list)
         self.show_result(fixture_article_list)
 
+    def __sort_handler(self, event):
+        """"""
+        sort_date_start = self.ent_sort_date_start.get()
+        sort_date_end = self.ent_sort_date_end.get()
+        sort_type = self.sort_selection_type.get()
+        sort_category = self.sort_selection_category.get()
+
+        if sort_date_start and sort_date_end:
+            try:
+                sort_start = datetime.strptime(
+                    sort_date_start, DATE_FORMAT
+                ).date()
+                sort_end = datetime.strptime(sort_date_end, DATE_FORMAT).date()
+            except ValueError:
+                messagebox.showwarning(
+                    "Предупреждение!", "Введите даты в формате 1970-01-01 (год-месяц-день)."
+                )
+            self.__clean_entry()
+        elif sort_date_start:
+            try:
+                sort_start = datetime.strptime(
+                    sort_date_start, DATE_FORMAT
+                ).date()
+                sort_end = datetime.today().date()
+            except ValueError:
+                messagebox.showwarning(
+                    "Предупреждение!", "Введите даты в формате 1970-01-01 (год-месяц-день)."
+                )
+            self.__clean_entry()
+        elif sort_date_end:
+            messagebox.showwarning("Предупреждение!", "Введите начало периода.")
+            self.__clean_entry()
+        else:
+            sort_start = None
+            sort_end = None
+
+        if sort_type == ARTICLE_INCOME_NAME:
+            sort_type = ARTICLE_INCOME
+        elif sort_type == ARTICLE_OUTLAY_NAME:
+            sort_type = ARTICLE_OUTLAY
+        else:
+            sort_type = None
+
+        if sort_category == CATEGORY_ALL:
+            sort_category = None
+        
+        sorter = Sorter(self.__articles_manager)
+        try:
+            sorted_article_list = sorter.sort_articles(sort_type, sort_category, sort_start, sort_end)
+        except UnboundLocalError:
+            sorted_article_list = sorter.sort_articles(sort_type, sort_category)
+        
+        self.show_articles(sorted_article_list)
+        self.show_result(sorted_article_list)
+        
     def __clean_box(self):
         """clean list box"""
         self.box_result.delete(0, "end")
+
+    def __clean_entry(self):
+        """clean entry margins"""
+        self.ent_sort_date_start.delete(0, 'end')
+        self.ent_sort_date_end.delete(0, 'end')

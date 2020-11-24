@@ -81,14 +81,14 @@ class FixtureManager:
     def __get_category(self, name):
         """create and return random category"""
         category_map = {
-            self.NAMES[0]: settings.DEFAULT_CATEGORIES_LIST[1],
-            self.NAMES[1]: settings.DEFAULT_CATEGORIES_LIST[1],
-            self.NAMES[2]: settings.DEFAULT_CATEGORIES_LIST[2],
-            self.NAMES[3]: settings.DEFAULT_CATEGORIES_LIST[3],
-            self.NAMES[4]: settings.DEFAULT_CATEGORIES_LIST[4],
-            self.NAMES[5]: settings.DEFAULT_CATEGORIES_LIST[5],
-            self.NAMES[6]: settings.DEFAULT_CATEGORIES_LIST[6],
-            self.NAMES[7]: settings.DEFAULT_CATEGORIES_LIST[7],
+            self.NAMES[0]: settings.DEFAULT_CATEGORIES_LIST[0],
+            self.NAMES[1]: settings.DEFAULT_CATEGORIES_LIST[0],
+            self.NAMES[2]: settings.DEFAULT_CATEGORIES_LIST[1],
+            self.NAMES[3]: settings.DEFAULT_CATEGORIES_LIST[2],
+            self.NAMES[4]: settings.DEFAULT_CATEGORIES_LIST[3],
+            self.NAMES[5]: settings.DEFAULT_CATEGORIES_LIST[4],
+            self.NAMES[6]: settings.DEFAULT_CATEGORIES_LIST[5],
+            self.NAMES[7]: settings.DEFAULT_CATEGORIES_LIST[6],
         }
 
         try:
