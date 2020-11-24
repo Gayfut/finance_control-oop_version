@@ -1,5 +1,4 @@
 """file for result DB control"""
-from db import article_db
 from settings import ARTICLE_INCOME, ARTICLE_OUTLAY
 
 

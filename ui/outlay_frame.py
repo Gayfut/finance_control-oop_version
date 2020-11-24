@@ -1,6 +1,6 @@
 """file for control specification of outlay frame"""
 from ui import basic_frame
-from article import OutlayArticle
+from outlay_article import OutlayArticle
 
 
 class OutlayFrame(basic_frame.BasicFrame):

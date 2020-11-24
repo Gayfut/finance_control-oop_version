@@ -1,6 +1,6 @@
 """file for control specification of income frame"""
 from ui import basic_frame
-from article import IncomeArticle
+from income_article import IncomeArticle
 
 
 class IncomeFrame(basic_frame.BasicFrame):

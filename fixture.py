@@ -1,7 +1,8 @@
 """file for create and control fixture"""
 from datetime import datetime, date
 from random import choice, randint
-from article import IncomeArticle, OutlayArticle
+from income_article import IncomeArticle
+from outlay_article import OutlayArticle
 import settings
 
 

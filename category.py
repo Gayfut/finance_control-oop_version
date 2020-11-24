@@ -1,3 +1,6 @@
+"""file for control category"""
+
+
 class Category:
     """control category specification"""
 

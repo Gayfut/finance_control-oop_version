@@ -1,5 +1,5 @@
+"""file for control base article"""
 from datetime import datetime
-from settings import ARTICLE_INCOME, ARTICLE_OUTLAY
 
 
 class Article:
@@ -27,21 +27,3 @@ class Article:
         }
 
         return article_dict
-
-
-class IncomeArticle(Article):
-    """control income article specifications"""
-
-    def __init__(self, name, amount, category, date_create=None):
-        super().__init__(
-            name, amount, ARTICLE_INCOME, category, date_create=date_create
-        )
-
-
-class OutlayArticle(Article):
-    """control outlay article specifications"""
-
-    def __init__(self, name, amount, category, date_create=None):
-        super().__init__(
-            name, amount, ARTICLE_OUTLAY, category, date_create=date_create
-        )

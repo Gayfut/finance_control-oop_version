@@ -85,9 +85,7 @@ class ResultFrame(LabelFrame):
         self.menu_sort_types = OptionMenu(self, self.sort_selection_type, *sort_types)
         self.menu_sort_types.config(bg="black", fg="orange")
         self.menu_sort_types_in_menu = self.menu_sort_types.children["menu"]
-        self.menu_sort_types_in_menu.bind(
-            "<Leave>", self.__sort_handler
-        )
+        self.menu_sort_types_in_menu.bind("<Leave>", self.__sort_handler)
 
         sort_categories = category_db.CategoryJSONManager.get_categories()
         sort_categories_names = []
@@ -103,18 +101,14 @@ class ResultFrame(LabelFrame):
         )
         self.menu_sort_categories.config(bg="black", fg="orange")
         self.menu_sort_categories_in_menu = self.menu_sort_categories["menu"]
-        self.menu_sort_categories_in_menu.bind(
-            "<Leave>", self.__sort_handler
-        )
+        self.menu_sort_categories_in_menu.bind("<Leave>", self.__sort_handler)
 
         self.ent_sort_date_start = Entry(self, bg="black", fg="orange")
         self.ent_sort_date_end = Entry(self, bg="black", fg="orange")
         self.btn_sort_by_date = Button(
             self, text="Отсортировать", bg="black", fg="orange"
         )
-        self.btn_sort_by_date.bind(
-            "<Button-1>", self.__sort_handler
-        )
+        self.btn_sort_by_date.bind("<Button-1>", self.__sort_handler)
 
     def __place_widgets(self):
         """pack result widgets"""
@@ -297,7 +291,7 @@ class ResultFrame(LabelFrame):
         self.show_result(fixture_article_list)
 
     def __sort_handler(self, event):
-        """"""
+        """get values from sort margins, validate it and sort by params"""
         sort_date_start = self.ent_sort_date_start.get()
         sort_date_end = self.ent_sort_date_end.get()
         sort_type = self.sort_selection_type.get()
@@ -305,24 +299,22 @@ class ResultFrame(LabelFrame):
 
         if sort_date_start and sort_date_end:
             try:
-                sort_start = datetime.strptime(
-                    sort_date_start, DATE_FORMAT
-                ).date()
+                sort_start = datetime.strptime(sort_date_start, DATE_FORMAT).date()
                 sort_end = datetime.strptime(sort_date_end, DATE_FORMAT).date()
             except ValueError:
                 messagebox.showwarning(
-                    "Предупреждение!", "Введите даты в формате 1970-01-01 (год-месяц-день)."
+                    "Предупреждение!",
+                    "Введите даты в формате 1970-01-01 (год-месяц-день).",
                 )
             self.__clean_entry()
         elif sort_date_start:
             try:
-                sort_start = datetime.strptime(
-                    sort_date_start, DATE_FORMAT
-                ).date()
+                sort_start = datetime.strptime(sort_date_start, DATE_FORMAT).date()
                 sort_end = datetime.today().date()
             except ValueError:
                 messagebox.showwarning(
-                    "Предупреждение!", "Введите даты в формате 1970-01-01 (год-месяц-день)."
+                    "Предупреждение!",
+                    "Введите даты в формате 1970-01-01 (год-месяц-день).",
                 )
             self.__clean_entry()
         elif sort_date_end:
@@ -341,21 +333,23 @@ class ResultFrame(LabelFrame):
 
         if sort_category == CATEGORY_ALL:
             sort_category = None
-        
+
         sorter = Sorter(self.__articles_manager)
         try:
-            sorted_article_list = sorter.sort_articles(sort_type, sort_category, sort_start, sort_end)
+            sorted_article_list = sorter.sort_articles(
+                sort_type, sort_category, sort_start, sort_end
+            )
         except UnboundLocalError:
             sorted_article_list = sorter.sort_articles(sort_type, sort_category)
-        
+
         self.show_articles(sorted_article_list)
         self.show_result(sorted_article_list)
-        
+
     def __clean_box(self):
         """clean list box"""
         self.box_result.delete(0, "end")
 
     def __clean_entry(self):
         """clean entry margins"""
-        self.ent_sort_date_start.delete(0, 'end')
-        self.ent_sort_date_end.delete(0, 'end')
+        self.ent_sort_date_start.delete(0, "end")
+        self.ent_sort_date_end.delete(0, "end")
