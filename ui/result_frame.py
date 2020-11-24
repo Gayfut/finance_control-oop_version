@@ -19,6 +19,7 @@ from settings import (
     ARTICLE_OUTLAY,
 )
 from db import category_db, result_db
+from fixture import FixtureManager
 
 
 class ResultFrame(LabelFrame):
@@ -66,10 +67,7 @@ class ResultFrame(LabelFrame):
 
         # demo widget
         self.btn_demo = Button(
-            self,
-            text="Демо",
-            bg="black",
-            fg="orange",
+            self, text="Демо", bg="black", fg="orange", command=self.__btn_demo_handler
         )
 
         # sort widgets
@@ -285,6 +283,14 @@ class ResultFrame(LabelFrame):
         self.__articles_manager.clean_all()
         self.show_result(clear_article_list)
         self.__clean_box()
+
+    def __btn_demo_handler(self):
+        """create fixture, save and show it"""
+        fixture = FixtureManager(self.__articles_manager)
+        fixture_article_list = fixture.get_fixture_articles()
+
+        self.show_articles(fixture_article_list)
+        self.show_result(fixture_article_list)
 
     def __clean_box(self):
         """clean list box"""
