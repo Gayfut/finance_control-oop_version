@@ -1,6 +1,6 @@
 """file for control app specifications"""
-from ui import main_window
-from db import article_db
+from ui.main_window import MainWindow
+from db.article_db import ArticleBufferedJSONManager
 
 
 class Application:
@@ -8,10 +8,8 @@ class Application:
 
     def __init__(self):
         """create main_window"""
-        self.__articles_manager = article_db.ArticleBufferedJSONManager()
-        self.main_window = main_window.MainWindow(
-            articles_manager=self.__articles_manager
-        )
+        self.__articles_manager = ArticleBufferedJSONManager()
+        self.main_window = MainWindow(articles_manager=self.__articles_manager)
 
     def start(self):
         """start app"""

@@ -1,7 +1,7 @@
 """file control specification of base frame for articles"""
 from tkinter import LabelFrame, Label, Entry, Button, StringVar, OptionMenu, messagebox
-from ui import categories_window
-from db import category_db
+from ui.categories_window import CategoryWindow
+from db.category_db import CategoryJSONManager
 
 
 class BasicFrame(LabelFrame):
@@ -40,7 +40,7 @@ class BasicFrame(LabelFrame):
             self, text="Выберите категорию:", bg="black", fg="orange"
         )
 
-        categories = category_db.CategoryJSONManager.get_categories()
+        categories = CategoryJSONManager.get_categories()
         categories_names = []
         for _category in categories:
             _category_name = _category.name
@@ -145,9 +145,30 @@ class BasicFrame(LabelFrame):
 
     def __btn_categories_handler(self):
         """create category window"""
-        self.category_window = categories_window.CategoryWindow(
-            self.menu_categories, self.selection_category
-        )
+        self.category_window = CategoryWindow(self.__refresh_categories)
+
+    def __refresh_categories(self):
+        """refresh categories in option menu on main window"""
+        categories = category_db.CategoryJSONManager.get_categories()
+        categories_names = []
+        for _category in categories:
+            _category_name = _category.name
+            categories_names.append(_category_name)
+
+        self.menu_categories.children["menu"].delete(0, "end")
+        self.result_frame.menu_sort_categories.children["menu"].delete(0, "end")
+
+        for _category in categories_names:
+            self.menu_categories.children["menu"].add_command(
+                label=_category,
+                command=lambda veh=_category: self.selection_category.set(veh),
+            )
+            self.result_frame.menu_sort_categories.children["menu"].add_command(
+                label=_category,
+                command=lambda veh=_category: self.result_frame.sort_selection_category.set(
+                    veh
+                ),
+            )
 
     def __check_article_on_repeat(self, new_article):
         """check new article on repeat in article DB"""

@@ -1,9 +1,9 @@
 """file for control specification of income frame"""
-from ui import basic_frame
+from ui.basic_frame import BasicFrame
 from income_article import IncomeArticle
 
 
-class IncomeFrame(basic_frame.BasicFrame):
+class IncomeFrame(BasicFrame):
     """control income frame"""
 
     BTN_APPEND_TEXT = "Добавить доход"

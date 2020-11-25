@@ -1,7 +1,7 @@
 """file control specification of control frame on category window"""
 from tkinter import LabelFrame, Entry, Button
 from category import Category
-from db import category_db
+from db.category_db import CategoryJSONManager
 
 
 class ControlFrame(LabelFrame):
@@ -69,7 +69,7 @@ class ControlFrame(LabelFrame):
 
         new_category = Category(new_category_name)
 
-        category_db.CategoryJSONManager.save_category(new_category)
+        CategoryJSONManager.save_category(new_category)
 
         self.list_frame.show_categories()
         self.__clean_entry()
@@ -81,7 +81,7 @@ class ControlFrame(LabelFrame):
         if not selection_category:
             return None
 
-        category_db.CategoryJSONManager.delete_category(selection_category)
+        CategoryJSONManager.delete_category(selection_category)
         self.list_frame.box_categories.delete(selection_category)
 
     def __clean_entry(self):

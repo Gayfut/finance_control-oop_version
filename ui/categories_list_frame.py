@@ -1,6 +1,6 @@
 """file control specification of list frame on category window"""
 from tkinter import LabelFrame, Label, Listbox
-from db import category_db
+from db.category_db import CategoryJSONManager
 
 
 class ListFrame(LabelFrame):
@@ -43,7 +43,7 @@ class ListFrame(LabelFrame):
         """show categories in list box"""
         self.__clean_box()
 
-        categories_list = category_db.CategoryJSONManager.get_categories()
+        categories_list = CategoryJSONManager.get_categories()
 
         for _category in categories_list:
             self.box_categories.insert("end", _category.name)

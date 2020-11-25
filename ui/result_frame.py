@@ -21,7 +21,8 @@ from settings import (
     ARTICLE_OUTLAY,
     DATE_FORMAT,
 )
-from db import category_db, result_db
+from db.category_db import CategoryJSONManager
+from db.result_db import ResultManager
 from fixture import FixtureManager
 from sort import Sorter
 
@@ -87,7 +88,7 @@ class ResultFrame(LabelFrame):
         self.menu_sort_types_in_menu = self.menu_sort_types.children["menu"]
         self.menu_sort_types_in_menu.bind("<Leave>", self.__sort_handler)
 
-        sort_categories = category_db.CategoryJSONManager.get_categories()
+        sort_categories = CategoryJSONManager.get_categories()
         sort_categories_names = []
         for _category in sort_categories:
             _category_name = _category.name
@@ -245,13 +246,13 @@ class ResultFrame(LabelFrame):
 
     def show_result(self, article_list):
         """show certain results in labels"""
-        income_result = result_db.ResultManager.get_income_result(article_list)
+        income_result = ResultManager.get_income_result(article_list)
         self.lbl_incomes["text"] = f"Доходы: {income_result}"
 
-        outlay_result = result_db.ResultManager.get_outlay_result(article_list)
+        outlay_result = ResultManager.get_outlay_result(article_list)
         self.lbl_outlays["text"] = f"Расходы: {outlay_result}"
 
-        final_result = result_db.ResultManager.get_final_result(article_list)
+        final_result = ResultManager.get_final_result(article_list)
         self.lbl_result["text"] = f"Итог: {final_result}"
         if final_result > 0:
             self.lbl_result["fg"] = "green"
@@ -266,7 +267,6 @@ class ResultFrame(LabelFrame):
         selection_article_index = self.box_result.curselection()
         selection_article_index = selection_article_index[0]
         selection_article = self.box_result.get(selection_article_index)
-        selection_article = list(selection_article)
 
         if not selection_article:
             return None

@@ -1,18 +1,17 @@
 """file for control specification of category window"""
 from tkinter import Toplevel
-from db import category_db
-from ui import categories_control_frame, categories_list_frame
+from ui.categories_control_frame import ControlFrame
+from ui.categories_list_frame import ListFrame
 
 
 class CategoryWindow:
     """control category window"""
 
-    def __init__(self, main_frames_menu_categories, main_frames_selection_category):
+    def __init__(self, on_destroy_callback):
         """create category window"""
         self.window = Toplevel()
 
-        self.main_frames_menu_categories = main_frames_menu_categories
-        self.main_frames_selection_category = main_frames_selection_category
+        self.on_destroy_callback = on_destroy_callback
 
         self.__configure_window()
         self.__init_frames()
@@ -25,14 +24,12 @@ class CategoryWindow:
         self.window.geometry("640x480")
         self.window.grab_set()
 
-        self.window.bind("<Destroy>", self.__refresh_categories)
+        self.window.bind("<Destroy>", self.__on_destroy)
 
     def __init_frames(self):
         """create frames for category window"""
-        self.list_frame = categories_list_frame.ListFrame(self.window)
-        self.control_frame = categories_control_frame.ControlFrame(
-            self.window, self.list_frame
-        )
+        self.list_frame = ListFrame(self.window)
+        self.control_frame = ControlFrame(self.window, self.list_frame)
 
     def __place_frames(self):
         """pack frames on category window"""
@@ -51,25 +48,5 @@ class CategoryWindow:
             relheight=frame_height,
         )
 
-    def __refresh_categories(self, event):
-        """refresh categories in option menu on main window"""
-        categories = category_db.CategoryJSONManager.get_categories()
-        categories_names = []
-        for _category in categories:
-            _category_name = _category.name
-            categories_names.append(_category_name)
-
-        self.main_frames_menu_categories.children["menu"].delete(0, "end")
-        # self.menu_sort_categories.children["menu"].delete(0, "end")
-
-        for _category in categories_names:
-            self.main_frames_menu_categories.children["menu"].add_command(
-                label=_category,
-                command=lambda veh=_category: self.main_frames_selection_category.set(
-                    veh
-                ),
-            )
-            # self.menu_sort_categories.children["menu"].add_command(
-            #     label=_category,
-            #     command=lambda veh=_category: self.sort_selection_category.set(veh),
-            # )
+    def __on_destroy(self, event):
+        self.on_destroy_callback()

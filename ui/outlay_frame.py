@@ -1,9 +1,9 @@
 """file for control specification of outlay frame"""
-from ui import basic_frame
+from ui.basic_frame import BasicFrame
 from outlay_article import OutlayArticle
 
 
-class OutlayFrame(basic_frame.BasicFrame):
+class OutlayFrame(BasicFrame):
     """control outlay frame"""
 
     BTN_APPEND_TEXT = "Добавить расход"
