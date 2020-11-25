@@ -132,7 +132,6 @@ class BasicFrame(LabelFrame):
         new_article = self._get_article(name, amount, category_name)
 
         check_status = self.__check_article_on_repeat(new_article)
-        print(check_status)
         if check_status is True:
             self.__articles_manager.save_article(new_article)
         else:
@@ -149,7 +148,7 @@ class BasicFrame(LabelFrame):
 
     def __refresh_categories(self):
         """refresh categories in option menu on main window"""
-        categories = category_db.CategoryJSONManager.get_categories()
+        categories = CategoryJSONManager.get_categories()
         categories_names = []
         for _category in categories:
             _category_name = _category.name

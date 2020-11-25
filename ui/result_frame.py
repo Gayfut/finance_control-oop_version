@@ -13,6 +13,7 @@ from tkinter import (
     messagebox,
 )
 from datetime import datetime
+from re import search
 from settings import (
     CATEGORY_ALL,
     ARTICLE_INCOME_NAME,
@@ -72,7 +73,7 @@ class ResultFrame(LabelFrame):
 
         # demo widget
         self.btn_demo = Button(
-            self, text="Демо", bg="black", fg="orange", command=self.__btn_demo_handler
+            self, text="Демо", bg="black", fg="orange", command=self.__btn_demo_handler,
         )
 
         # sort widgets
@@ -222,18 +223,19 @@ class ResultFrame(LabelFrame):
             article_type = _article.article_type
             date_create = _article.date_create
             category_name = _article.category
+            article_id = _article.article_id
 
             name = name.rjust(10, " ")
             amount = str(amount).rjust(6, " ")
 
             if article_type == ARTICLE_INCOME:
                 self.box_result.insert(
-                    0, f"{article_type} {name} {amount} {category_name} {date_create}"
+                    0, f"{article_type} {name} {amount} {category_name} {date_create} {article_id}"
                 )
                 self.box_result.itemconfig(0, {"bg": "green"})
             elif article_type == ARTICLE_OUTLAY:
                 self.box_result.insert(
-                    0, f"{article_type} {name} {amount} {category_name} {date_create}"
+                    0, f"{article_type} {name} {amount} {category_name} {date_create} {article_id}"
                 )
                 self.box_result.itemconfig(0, {"bg": "red"})
 
@@ -267,11 +269,12 @@ class ResultFrame(LabelFrame):
         selection_article_index = self.box_result.curselection()
         selection_article_index = selection_article_index[0]
         selection_article = self.box_result.get(selection_article_index)
-
-        if not selection_article:
+        selection_article_id = search("id\d+", selection_article ).group(0)
+        print(selection_article_id)
+        if not selection_article_id:
             return None
 
-        self.__articles_manager.delete_article(selection_article)
+        self.__articles_manager.delete_article(selection_article_id)
         self.box_result.delete(selection_article_index)
 
     def __btn_clean_handler(self):

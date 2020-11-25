@@ -24,10 +24,11 @@ class ArticleBufferedJSONManager:
     def flush_articles(self):
         """save articles from buffer"""
         old_articles_list = self.get_articles()
-        old_articles_list.extend(self.__article_buffer)
+        article_buffer = self.get_article_buffer()
+        article_buffer.extend(old_articles_list)
 
         article_list_for_save = []
-        for _article in old_articles_list:
+        for _article in article_buffer:
             _article_dict = _article.to_dict()
             _article_dict["date_create"] = _article_dict["date_create"].strftime(
                 settings.DATE_FORMAT
@@ -52,14 +53,18 @@ class ArticleBufferedJSONManager:
 
         self.flush_articles()
 
-    # def delete_article(self, selection_article):
-    #
-    #     if len(self.__article_buffer) == 0:
-    #         article_list = self.get_articles()
-    #         del article_list[selection_article]
-    #         self.save_articles(article_list)
-    #     else:
-    #         del self.__article_buffer[selection_article]
+    def delete_article(self, selection_article_id):
+
+        if len(self.__article_buffer) == 0:
+            article_list = self.get_articles()
+            for _step in range(len(article_list)):
+                if article_list[_step].article_id == selection_article_id:
+                    del article_list[_step]
+            self.save_articles(article_list)
+        else:
+            for _step in range(len(self.__article_buffer)):
+                if self.__article_buffer[_step].article_id == selection_article_id:
+                    del self.__article_buffer[_step]
 
     @staticmethod
     def get_articles():
@@ -97,4 +102,4 @@ class ArticleBufferedJSONManager:
 
     def __clean_article_buffer(self):
         """clean articles buffer"""
-        self.__article_buffer = []
+        self.__article_buffer.clear()

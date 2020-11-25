@@ -15,6 +15,7 @@ class Article:
         else:
             self.date_create = date_create
         self.category = category
+        self.article_id = "id" + str(id(self))
 
     def to_dict(self):
         """return article in dict format"""
@@ -24,6 +25,7 @@ class Article:
             "article_type": self.article_type,
             "date_create": self.date_create,
             "category": self.category,
+            "id": self.article_id,
         }
 
         return article_dict
