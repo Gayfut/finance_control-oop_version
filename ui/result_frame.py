@@ -267,7 +267,6 @@ class ResultFrame(LabelFrame):
 
     def __btn_delete_handler(self):
         """get selection article from list box, create article and delete it from article db"""
-        # TODO: need fix
         selection_article_index = self.box_result.curselection()
         selection_article_index = selection_article_index[0]
         selection_article = self.box_result.get(selection_article_index)
@@ -278,6 +277,7 @@ class ResultFrame(LabelFrame):
 
         self.__articles_manager.delete_article(selection_article_id)
         self.box_result.delete(selection_article_index)
+        self.show_result_unsorted()
 
     def __btn_clean_handler(self):
         """clean article buffer, article list and list box"""
