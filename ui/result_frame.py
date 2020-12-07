@@ -73,7 +73,11 @@ class ResultFrame(LabelFrame):
 
         # demo widget
         self.btn_demo = Button(
-            self, text="Демо", bg="black", fg="orange", command=self.__btn_demo_handler,
+            self,
+            text="Демо",
+            bg="black",
+            fg="orange",
+            command=self.__btn_demo_handler,
         )
 
         # sort widgets
@@ -208,10 +212,8 @@ class ResultFrame(LabelFrame):
 
     def show_articles_unsorted(self):
         """show unsorted articles in list box"""
-        article_buffer = self.__articles_manager.get_article_buffer()
         article_list = self.__articles_manager.get_articles()
-        article_buffer.extend(article_list)
-        self.show_articles(article_buffer)
+        self.show_articles(article_list)
 
     def show_articles(self, article_list):
         """show certain articles in list box"""
@@ -230,21 +232,21 @@ class ResultFrame(LabelFrame):
 
             if article_type == ARTICLE_INCOME:
                 self.box_result.insert(
-                    0, f"{article_type} {name} {amount} {category_name} {date_create} {article_id}"
+                    0,
+                    f"{article_type} {name} {amount} {category_name} {date_create} {article_id}",
                 )
                 self.box_result.itemconfig(0, {"bg": "green"})
             elif article_type == ARTICLE_OUTLAY:
                 self.box_result.insert(
-                    0, f"{article_type} {name} {amount} {category_name} {date_create} {article_id}"
+                    0,
+                    f"{article_type} {name} {amount} {category_name} {date_create} {article_id}",
                 )
                 self.box_result.itemconfig(0, {"bg": "red"})
 
     def show_result_unsorted(self):
         """show unsorted results in labels"""
-        article_buffer = self.__articles_manager.get_article_buffer()
         article_list = self.__articles_manager.get_articles()
-        article_buffer.extend(article_list)
-        self.show_result(article_buffer)
+        self.show_result(article_list)
 
     def show_result(self, article_list):
         """show certain results in labels"""
@@ -269,8 +271,8 @@ class ResultFrame(LabelFrame):
         selection_article_index = self.box_result.curselection()
         selection_article_index = selection_article_index[0]
         selection_article = self.box_result.get(selection_article_index)
-        selection_article_id = search("id\d+", selection_article ).group(0)
-        print(selection_article_id)
+        selection_article_id = search("id\d+", selection_article).group(0)
+
         if not selection_article_id:
             return None
 

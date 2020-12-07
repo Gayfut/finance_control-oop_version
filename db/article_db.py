@@ -21,14 +21,25 @@ class ArticleBufferedJSONManager:
         """return article buffer"""
         return self.__article_buffer
 
-    def flush_articles(self):
+    def flush_articles(self, delete=False, selection_article_id=None):
         """save articles from buffer"""
-        old_articles_list = self.get_articles()
-        article_buffer = self.get_article_buffer()
-        article_buffer.extend(old_articles_list)
+        if delete:
+            article_list = self.get_articles(flash=False)
+            for _step in range(len(article_list)):
+                if article_list[_step].article_id == selection_article_id:
+                    del article_list[_step]
+            self.__article_buffer.extend(article_list)
+
+        if not delete:
+            if not self.__article_buffer:
+                return
+
+        if not delete:
+            old_articles_list = self.get_articles(flash=False)
+            self.__article_buffer.extend(old_articles_list)
 
         article_list_for_save = []
-        for _article in article_buffer:
+        for _article in self.__article_buffer:
             _article_dict = _article.to_dict()
             _article_dict["date_create"] = _article_dict["date_create"].strftime(
                 settings.DATE_FORMAT
@@ -44,9 +55,10 @@ class ArticleBufferedJSONManager:
         """save single article"""
         self.save_articles([article])
 
-    def save_articles(self, article_list):
+    def save_articles(self, article_list, repeat=False):
         """save articles"""
-        self.__article_buffer.extend(article_list)
+        if not repeat:
+            self.__article_buffer.extend(article_list)
 
         if len(self.__article_buffer) <= self.__buffer_size:
             return
@@ -54,21 +66,14 @@ class ArticleBufferedJSONManager:
         self.flush_articles()
 
     def delete_article(self, selection_article_id):
+        """delete selection article from db"""
+        self.flush_articles(delete=True, selection_article_id=selection_article_id)
 
-        if len(self.__article_buffer) == 0:
-            article_list = self.get_articles()
-            for _step in range(len(article_list)):
-                if article_list[_step].article_id == selection_article_id:
-                    del article_list[_step]
-            self.save_articles(article_list)
-        else:
-            for _step in range(len(self.__article_buffer)):
-                if self.__article_buffer[_step].article_id == selection_article_id:
-                    del self.__article_buffer[_step]
-
-    @staticmethod
-    def get_articles():
+    def get_articles(self, flash=True):
         """return articles"""
+        if flash:
+            self.flush_articles()
+
         article_list = []
         try:
             with open("article_list.json", encoding="utf-8") as file_with_article:
@@ -87,8 +92,10 @@ class ArticleBufferedJSONManager:
                 article_dict["article_type"],
                 article_dict["category"],
                 article_dict["date_create"],
+                article_dict["id"],
             )
             article_list.append(article)
+
         return article_list
 
     def clean_all(self):
@@ -102,4 +109,4 @@ class ArticleBufferedJSONManager:
 
     def __clean_article_buffer(self):
         """clean articles buffer"""
-        self.__article_buffer.clear()
+        self.__article_buffer = []
